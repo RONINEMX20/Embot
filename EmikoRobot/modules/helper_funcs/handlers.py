@@ -1,21 +1,20 @@
-import EmikoRobot.modules.sql.blacklistusers_sql as sql
-from EmikoRobot import ALLOW_EXCL
-from EmikoRobot import DEV_USERS, DRAGONS, DEMONS, TIGERS, WOLVES
-
-from telegram import Update
-from telegram.ext import CommandHandler, MessageHandler, RegexHandler, Filters
 from pyrate_limiter import (
     BucketFullException,
     Duration,
-    RequestRate,
     Limiter,
     MemoryListBucket,
+    RequestRate,
 )
+from telegram import Update
+from telegram.ext import CommandHandler, Filters, MessageHandler, RegexHandler
+
+import EmikoRobotRobot.modules.sql.blacklistusers_sql as sql
+from EmikoRobotRobot import ALLOW_EXCL, DEMONS, DEV_USERS, DRAGONS, TIGERS, WOLVES
 
 if ALLOW_EXCL:
-    CMD_STARTERS = ("/", "!", "~")
+    CMD_STARTERS = ("/", "!")
 else:
-    CMD_STARTERS = ("/", "!", "~",)
+    CMD_STARTERS = "/"
 
 
 class AntiSpam:
@@ -76,8 +75,9 @@ class CustomCommandHandler(CommandHandler):
             except:
                 user_id = None
 
-            if user_id and sql.is_user_blacklisted(user_id):
-                return False
+            if user_id:
+                if sql.is_user_blacklisted(user_id):
+                    return False
 
             if message.text and len(message.text) > 1:
                 fst_word = message.text.split(None, 1)[0]
@@ -100,14 +100,16 @@ class CustomCommandHandler(CommandHandler):
                     filter_result = self.filters(update)
                     if filter_result:
                         return args, filter_result
-                    return False
+                    else:
+                        return False
 
     def handle_update(self, update, dispatcher, check_result, context=None):
         if context:
             self.collect_additional_context(context, update, dispatcher, check_result)
             return self.callback(update, context)
-        optional_args = self.collect_optional_args(dispatcher, update, check_result)
-        return self.callback(dispatcher.bot, update, **optional_args)
+        else:
+            optional_args = self.collect_optional_args(dispatcher, update, check_result)
+            return self.callback(dispatcher.bot, update, **optional_args)
 
     def collect_additional_context(self, context, update, dispatcher, check_result):
         if isinstance(check_result, bool):
