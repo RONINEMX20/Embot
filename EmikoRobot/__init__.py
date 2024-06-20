@@ -164,7 +164,8 @@ else:
         TIGERS = {int(x) for x in Config.TIGERS or []}
     except ValueError:
         raise Exception("Your tiger users list does not contain valid integers.")
-
+        
+    GBANS_LOGS = Config.GBANS_LOGS
     EVENT_LOGS = Config.EVENT_LOGS
     WEBHOOK = Config.WEBHOOK
     URL = Config.URL
