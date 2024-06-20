@@ -27,7 +27,9 @@ class Config(object):
         -1001748076180
     )  # Prints information like gbans, sudo promotes, AI enabled disable states that may help in debugging and shit
     ERROR_LOG = -1001657496255
-
+    GBANS_LOGS = (
+        -1001748076180
+    )  # Prints information like gbans, sudo promotes, AI enabled disable states that may help in debugging and shit
     # RECOMMENDED
     SQLALCHEMY_DATABASE_URI = "something://somewhat:user@hosturl:port/databasename"  # needed for any database modules
     MONGO_DB_URI = "mongo+srv"  # needed for any database modules
