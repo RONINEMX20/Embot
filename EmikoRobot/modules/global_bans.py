@@ -18,6 +18,7 @@ from EmikoRobot.modules.sql.users_sql import get_user_com_chats
 from EmikoRobot import (
     DEV_USERS,
     EVENT_LOGS,
+    GBANS_LOGS,
     OWNER_ID,
     STRICT_GBAN,
     DRAGONS,
@@ -189,9 +190,9 @@ def gban(update: Update, context: CallbackContext):
         else:
             log_message += f"\n<b>Reason:</b> <code>{reason}</code>"
 
-    if EVENT_LOGS:
+    if GBANS_LOGS:
         try:
-            log = bot.send_message(EVENT_LOGS, log_message, parse_mode=ParseMode.HTML)
+            log = bot.send_message(GBANS_LOGS, log_message, parse_mode=ParseMode.HTML)
         except BadRequest as excp:
             log = bot.send_message(
                 EVENT_LOGS,
@@ -219,13 +220,13 @@ def gban(update: Update, context: CallbackContext):
             gbanned_chats += 1
 
         except BadRequest as excp:
-            if excp.message in GBAN_ERRORS:
+            if excp.message in GBANS_LOGS:
                 pass
             else:
                 message.reply_text(f"Could not gban due to: {excp.message}")
-                if EVENT_LOGS:
+                if GBANS_LOGS:
                     bot.send_message(
-                        EVENT_LOGS,
+                        GBANS_LOGS,
                         f"Could not gban due to {excp.message}",
                         parse_mode=ParseMode.HTML,
                     )
@@ -240,7 +241,7 @@ def gban(update: Update, context: CallbackContext):
         except TelegramError:
             pass
 
-    if EVENT_LOGS:
+    if GBANS_LOGS:
         log.edit_text(
             log_message + f"\n<b>Chats affected:</b> <code>{gbanned_chats}</code>",
             parse_mode=ParseMode.HTML,
@@ -320,9 +321,9 @@ def ungban(update: Update, context: CallbackContext):
         f"<b>Event Stamp:</b> <code>{current_time}</code>"
     )
 
-    if EVENT_LOGS:
+    if GBANS_LOGS:
         try:
-            log = bot.send_message(EVENT_LOGS, log_message, parse_mode=ParseMode.HTML)
+            log = bot.send_message(GBANS_LOGS, log_message, parse_mode=ParseMode.HTML)
         except BadRequest as excp:
             log = bot.send_message(
                 EVENT_LOGS,
@@ -370,7 +371,7 @@ def ungban(update: Update, context: CallbackContext):
 
     sql.ungban_user(user_id)
 
-    if EVENT_LOGS:
+    if GBANS_LOGS:
         log.edit_text(
             log_message + f"\n<b>Chats affected:</b> {ungbanned_chats}",
             parse_mode=ParseMode.HTML,
